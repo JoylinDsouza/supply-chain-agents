@@ -1,22 +1,28 @@
 location,demand_growth_rate_pct,build_cost_millions,avg_npv_millions,npv_p10_millions,npv_p90_millions,avg_breakeven_year,probability_profitable_pct,recommendation
-Germany,5.0,12.0,-16.096,-17.271,-14.555,11.0,0.0,DO NOT INVEST — insufficient return
-Germany,8.0,12.0,-13.929,-15.484,-11.886,11.0,0.0,DO NOT INVEST — insufficient return
-Germany,10.0,12.0,-12.08,-13.937,-9.396,11.0,0.0,DO NOT INVEST — insufficient return
-Germany,12.0,12.0,-10.393,-12.717,-7.725,11.0,0.0,DO NOT INVEST — insufficient return
-Germany,15.0,12.0,-7.187,-9.481,-4.441,10.6,1.0,DO NOT INVEST — insufficient return
-Germany,18.0,12.0,-3.921,-6.877,-0.484,9.8,5.0,DO NOT INVEST — insufficient return
-Germany,20.0,12.0,-1.034,-4.466,3.532,9.2,31.0,DO NOT INVEST — insufficient return
-Poland,5.0,7.0,-8.987,-10.03,-7.915,11.0,0.0,DO NOT INVEST — insufficient return
-Poland,8.0,7.0,-7.851,-9.03,-6.65,11.0,0.0,DO NOT INVEST — insufficient return
-Poland,10.0,7.0,-6.68,-7.955,-4.98,11.0,0.0,DO NOT INVEST — insufficient return
-Poland,12.0,7.0,-5.571,-7.071,-3.955,10.9,0.0,DO NOT INVEST — insufficient return
-Poland,15.0,7.0,-3.183,-5.148,-1.018,10.2,3.0,DO NOT INVEST — insufficient return
-Poland,18.0,7.0,-1.091,-3.315,1.548,9.3,26.0,DO NOT INVEST — insufficient return
-Poland,20.0,7.0,0.975,-1.445,3.521,8.8,70.0,CONDITIONAL — invest only if demand growth confirmed
-Netherlands,5.0,14.0,-19.677,-21.249,-17.859,11.0,0.0,DO NOT INVEST — insufficient return
-Netherlands,8.0,14.0,-17.669,-19.687,-15.313,11.0,0.0,DO NOT INVEST — insufficient return
-Netherlands,10.0,14.0,-15.746,-17.765,-13.085,11.0,0.0,DO NOT INVEST — insufficient return
-Netherlands,12.0,14.0,-13.478,-16.042,-10.892,11.0,0.0,DO NOT INVEST — insufficient return
-Netherlands,15.0,14.0,-9.899,-13.29,-6.573,10.8,1.0,DO NOT INVEST — insufficient return
-Netherlands,18.0,14.0,-5.713,-9.214,-1.408,10.0,5.0,DO NOT INVEST — insufficient return
-Netherlands,20.0,14.0,-2.727,-6.472,2.352,9.4,18.0,DO NOT INVEST — insufficient return
+Germany,2.0,12.0,-12.076,-13.714,-10.364,11.0,0.0,DO NOT INVEST — insufficient return
+Germany,4.0,12.0,-10.213,-12.261,-7.809,11.0,0.0,DO NOT INVEST — insufficient return
+Germany,6.0,12.0,-8.538,-10.857,-6.146,10.9,0.0,DO NOT INVEST — insufficient return
+Germany,8.0,12.0,-6.449,-8.911,-3.65,10.7,0.0,DO NOT INVEST — insufficient return
+Germany,10.0,12.0,-3.767,-6.975,-0.384,9.8,5.0,DO NOT INVEST — insufficient return
+Germany,12.0,12.0,-1.324,-4.868,2.682,9.0,31.0,DO NOT INVEST — insufficient return
+Germany,15.0,12.0,3.06,-0.724,7.706,7.9,82.0,CONDITIONAL — invest only if demand growth confirmed
+Germany,18.0,12.0,9.008,4.264,14.314,7.2,100.0,CONDITIONAL — invest only if demand growth confirmed
+Germany,20.0,12.0,13.388,8.278,18.758,6.7,100.0,INVEST — financially justified
+Poland,2.0,7.0,-5.659,-6.779,-4.217,11.0,0.0,DO NOT INVEST — insufficient return
+Poland,4.0,7.0,-4.56,-6.184,-3.115,10.8,1.0,DO NOT INVEST — insufficient return
+Poland,6.0,7.0,-3.165,-4.755,-1.093,10.4,2.0,DO NOT INVEST — insufficient return
+Poland,8.0,7.0,-1.471,-3.179,0.594,9.4,18.0,DO NOT INVEST — insufficient return
+Poland,10.0,7.0,0.113,-1.681,2.285,8.5,50.0,CONDITIONAL — invest only if demand growth confirmed
+Poland,12.0,7.0,1.969,0.039,4.528,7.9,90.0,CONDITIONAL — invest only if demand growth confirmed
+Poland,15.0,7.0,5.338,2.614,8.665,6.8,100.0,INVEST — financially justified
+Poland,18.0,7.0,9.519,6.253,13.445,6.2,100.0,INVEST — financially justified
+Poland,20.0,7.0,12.233,8.264,16.111,5.9,100.0,INVEST — financially justified
+Netherlands,2.0,15.0,-13.942,-16.049,-11.338,11.0,0.0,DO NOT INVEST — insufficient return
+Netherlands,4.0,15.0,-11.503,-13.924,-8.947,11.0,0.0,DO NOT INVEST — insufficient return
+Netherlands,6.0,15.0,-9.48,-12.166,-6.358,10.9,0.0,DO NOT INVEST — insufficient return
+Netherlands,8.0,15.0,-6.315,-9.934,-2.287,10.2,0.0,DO NOT INVEST — insufficient return
+Netherlands,10.0,15.0,-3.629,-7.477,0.389,9.5,12.0,DO NOT INVEST — insufficient return
+Netherlands,12.0,15.0,0.364,-3.465,4.619,8.6,53.0,CONDITIONAL — invest only if demand growth confirmed
+Netherlands,15.0,15.0,6.59,1.402,13.021,7.7,97.0,CONDITIONAL — invest only if demand growth confirmed
+Netherlands,18.0,15.0,13.546,7.578,20.784,6.9,100.0,INVEST — financially justified
+Netherlands,20.0,15.0,18.355,12.056,25.502,6.5,100.0,INVEST — financially justified

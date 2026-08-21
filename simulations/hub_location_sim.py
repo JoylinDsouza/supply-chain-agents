@@ -240,27 +240,27 @@ if __name__ == "__main__":
             "name": "Germany",
             "build_cost": 12.0,
             "ops_cost": 2.5,
-            "freight_cost": 8.0,
+            "freight_cost": 12.0,
             "freight_saving": 0.18
         },
         {
             "name": "Poland",
             "build_cost": 7.0,
             "ops_cost": 1.6,
-            "freight_cost": 8.0,
-            "freight_saving": 0.12
+            "freight_cost": 12.0,
+            "freight_saving": 0.13
         },
         {
             "name": "Netherlands",
-            "build_cost": 14.0,
+            "build_cost": 15.0,
             "ops_cost": 3.0,
-            "freight_cost": 8.0,
-            "freight_saving": 0.20
+            "freight_cost": 12.0,
+            "freight_saving": 0.23
         }
     ]
 
-    growth_rates = [0.05, 0.08, 0.10, 0.12, 0.15, 0.18, 0.20]
-
+    growth_rates = [0.02, 0.04, 0.06, 0.08, 0.10, 0.12, 0.15, 0.18, 0.20]
+    
     print("\nRunning location comparison across demand growth rates...")
     print("-" * 70)
     print(f"{'Location':<14} {'Growth':>8} {'NPV (£M)':>10} "
