@@ -1,34 +1,52 @@
 import numpy as np
 import json
 import os
+import csv
+import matplotlib.pyplot as plt
 from openai import OpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# ── THE SIMULATION ──────────────────────────────────────────
-def run_inventory_sim(reorder_point, order_quantity, lead_time_days, demand_mean, demand_std, simulation_days=90):
+# ── THE SIMULATION ───────────────────────────────────────────────────────────
+def run_inventory_sim(
+    reorder_point,
+    order_quantity,
+    lead_time_days,
+    demand_mean,
+    demand_std,
+    simulation_days=90,
+    seasonal_spike_week=6,
+    seasonal_spike_multiplier=1.4
+):
     """
-    Simulates a Landmark Group store managing inventory over N days.
-    Models realistic random demand and calculates key performance metrics.
+    Simulates a retail store's inventory over N days.
+    Includes seasonal demand spike (e.g. a sale period).
+    Returns key performance indicators.
     """
-    np.random.seed(42)
+    np.random.seed(None)  # Different random seed each run (for Monte Carlo)
     inventory = reorder_point * 2
     holding_cost = 0
     stockout_days = 0
     orders_pending = []
 
     for day in range(simulation_days):
-
-        # Check if any orders arrive today
+        # Check if any pending orders arrive today
         arrived = [(d, q) for (d, q) in orders_pending if d <= day]
         for (_, qty) in arrived:
             inventory += qty
         orders_pending = [(d, q) for (d, q) in orders_pending if d > day]
 
-        # Simulate today's demand — random, based on mean and variability
-        demand = max(0, int(np.random.normal(demand_mean, demand_std)))
+        # Seasonal spike: weeks 6 and 7 (days 35-49) have higher demand
+        week = day // 7
+        if week == seasonal_spike_week or week == seasonal_spike_week + 1:
+            today_mean = demand_mean * seasonal_spike_multiplier
+        else:
+            today_mean = demand_mean
+
+        # Random daily demand
+        demand = max(0, int(np.random.normal(today_mean, demand_std)))
 
         # Fill demand from inventory
         if inventory >= demand:
@@ -37,15 +55,14 @@ def run_inventory_sim(reorder_point, order_quantity, lead_time_days, demand_mean
             stockout_days += 1
             inventory = 0
 
-        # Pay holding cost for stock sitting in warehouse
-        holding_cost += inventory * 0.5  # £0.50 per unit per day
+        # Holding cost
+        holding_cost += inventory * 0.5
 
-        # Place a new order if stock is running low
+        # Reorder if low
         if inventory <= reorder_point and not orders_pending:
             orders_pending.append((day + lead_time_days, order_quantity))
 
     service_level = round((1 - stockout_days / simulation_days) * 100, 1)
-
     return {
         "service_level_pct": service_level,
         "stockout_days": stockout_days,
@@ -54,148 +71,156 @@ def run_inventory_sim(reorder_point, order_quantity, lead_time_days, demand_mean
         "verdict": "good" if service_level >= 95 else "needs improvement"
     }
 
-# ── THE TOOL DESCRIPTION ────────────────────────────────────
-tools = [{
-    "type": "function",
-    "function": {
-        "name": "run_inventory_sim",
-        "description": "Simulates a retail store's inventory over 90 days. Models random daily demand, stock replenishment, and calculates service level and holding costs. Use this when asked about inventory policy, reorder points, or stock management.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "reorder_point": {
-                    "type": "integer",
-                    "description": "Place a new order when stock falls below this number"
-                },
-                "order_quantity": {
-                    "type": "integer",
-                    "description": "How many units to order each time"
-                },
-                "lead_time_days": {
-                    "type": "integer",
-                    "description": "How many days until the order arrives"
-                },
-                "demand_mean": {
-                    "type": "number",
-                    "description": "Average units sold per day"
-                },
-                "demand_std": {
-                    "type": "number",
-                    "description": "How unpredictable daily demand is (standard deviation)"
-                }
-            },
-            "required": ["reorder_point", "order_quantity", "lead_time_days", "demand_mean", "demand_std"]
-        }
-    }
-}]
 
-# ── ASK GPT TO USE THE SIMULATION ───────────────────────────
+# ── MONTE CARLO: RUN MULTIPLE TRIALS AND AVERAGE ────────────────────────────
+def run_monte_carlo(reorder_point, order_quantity, lead_time_days,
+                    demand_mean, demand_std, trials=20):
+    """
+    Runs the simulation multiple times and returns averaged results.
+    This smooths out lucky or unlucky random runs.
+    """
+    all_service_levels = []
+    all_stockout_days = []
+    all_holding_costs = []
+
+    for _ in range(trials):
+        result = run_inventory_sim(
+            reorder_point, order_quantity, lead_time_days,
+            demand_mean, demand_std
+        )
+        all_service_levels.append(result["service_level_pct"])
+        all_stockout_days.append(result["stockout_days"])
+        all_holding_costs.append(result["total_holding_cost_gbp"])
+
+    return {
+        "reorder_point": reorder_point,
+        "order_quantity": order_quantity,
+        "avg_service_level_pct": round(sum(all_service_levels) / trials, 1),
+        "avg_stockout_days": round(sum(all_stockout_days) / trials, 1),
+        "avg_holding_cost_gbp": round(sum(all_holding_costs) / trials, 2),
+        "trials_run": trials
+    }
+
+
+# ── EXPERIMENT: TEST A RANGE OF POLICIES ────────────────────────────────────
+print("=" * 60)
+print("EXPERIMENT: Testing 6 reorder point policies")
+print("Each policy is run 20 times and averaged (Monte Carlo)")
+print("=" * 60)
+
+# Parameters that stay the same across all policies
+LEAD_TIME = 7
+DEMAND_MEAN = 200
+DEMAND_STD = 40
+ORDER_QTY = 1500
+
+# The range of reorder points we are testing
+reorder_points = [200, 400, 600, 800, 1000, 1200]
+
+experiment_results = []
+
+for rp in reorder_points:
+    result = run_monte_carlo(
+        reorder_point=rp,
+        order_quantity=ORDER_QTY,
+        lead_time_days=LEAD_TIME,
+        demand_mean=DEMAND_MEAN,
+        demand_std=DEMAND_STD,
+        trials=20
+    )
+    experiment_results.append(result)
+    print(f"Reorder point {rp:>5} | "
+          f"Service level: {result['avg_service_level_pct']:>5}% | "
+          f"Stockout days: {result['avg_stockout_days']:>4} | "
+          f"Holding cost: £{result['avg_holding_cost_gbp']:>8,.0f}")
+
+# ── SAVE RESULTS TO CSV ──────────────────────────────────────────────────────
+csv_filename = "simulation1_results.csv"
+with open(csv_filename, "w", newline="") as f:
+    writer = csv.DictWriter(f, fieldnames=experiment_results[0].keys())
+    writer.writeheader()
+    writer.writerows(experiment_results)
+
+print(f"\nResults saved to {csv_filename}")
+
+# ── PLOT THE GRAPH ───────────────────────────────────────────────────────────
+rp_values = [r["reorder_point"] for r in experiment_results]
+service_levels = [r["avg_service_level_pct"] for r in experiment_results]
+holding_costs = [r["avg_holding_cost_gbp"] for r in experiment_results]
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+fig.suptitle("Simulation 1: Inventory Replenishment Policy Comparison\n(Monte Carlo, 20 trials each, with seasonal demand spike)",
+             fontsize=13, fontweight="bold")
+
+# Graph 1: Service Level
+ax1.plot(rp_values, service_levels, marker="o", color="steelblue",
+         linewidth=2, markersize=8)
+ax1.axhline(y=95, color="red", linestyle="--", alpha=0.7, label="95% target")
+ax1.set_xlabel("Reorder Point (units)", fontsize=11)
+ax1.set_ylabel("Average Service Level (%)", fontsize=11)
+ax1.set_title("Service Level vs Reorder Point", fontsize=11)
+ax1.legend()
+ax1.grid(True, alpha=0.3)
+ax1.set_ylim(0, 105)
+
+# Graph 2: Holding Cost
+ax2.plot(rp_values, holding_costs, marker="s", color="darkorange",
+         linewidth=2, markersize=8)
+ax2.set_xlabel("Reorder Point (units)", fontsize=11)
+ax2.set_ylabel("Average Holding Cost (£)", fontsize=11)
+ax2.set_title("Holding Cost vs Reorder Point", fontsize=11)
+ax2.grid(True, alpha=0.3)
+ax2.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f"£{x:,.0f}"))
+
+plt.tight_layout()
+graph_filename = "simulation1_graph.png"
+plt.savefig(graph_filename, dpi=150, bbox_inches="tight")
+plt.show()
+print(f"Graph saved to {graph_filename}")
+
+# ── ASK GPT TO ANALYSE THE RESULTS ──────────────────────────────────────────
+print("\n" + "=" * 60)
+print("Asking GPT to analyse the full experiment results...")
+print("=" * 60)
+
+# Format results as a readable table for GPT
+results_text = "Reorder Point | Service Level | Stockout Days | Holding Cost\n"
+results_text += "-" * 60 + "\n"
+for r in experiment_results:
+    results_text += (f"{r['reorder_point']:>13} | "
+                     f"{r['avg_service_level_pct']:>13}% | "
+                     f"{r['avg_stockout_days']:>13} | "
+                     f"£{r['avg_holding_cost_gbp']:>11,.0f}\n")
+
 messages = [
     {
         "role": "system",
-        "content": "You are a supply chain analyst for Landmark Group. You have access to an inventory simulation tool. Always use it to get real numbers before giving advice. Never guess."
+        "content": (
+            "You are a supply chain analyst writing for an academic dissertation. "
+            "Analyse results precisely. Identify the optimal policy. "
+            "Explain the trade-off between service level and holding cost. "
+            "Note that a seasonal demand spike was included in weeks 6 and 7."
+        )
     },
     {
         "role": "user",
-        "content": "A UK retail store sells around 200 units per day on average, but demand varies a lot (std dev of 40 units). Supplier takes 7 days to deliver. We currently reorder 1000 units when stock hits 300. Is this a good policy? Run the simulation and tell me."
+        "content": (
+            f"Here are the results of a Monte Carlo inventory simulation "
+            f"(20 trials per policy, 90 days each, seasonal demand spike at week 6-7):\n\n"
+            f"{results_text}\n"
+            f"Demand mean: {DEMAND_MEAN} units/day, std: {DEMAND_STD}, "
+            f"lead time: {LEAD_TIME} days, order quantity: {ORDER_QTY}.\n\n"
+            f"Which reorder point gives the best balance of service level and cost? "
+            f"What does the seasonal spike reveal? "
+            f"What would you recommend and why?"
+        )
     }
 ]
-
-print("Running inventory simulation via GPT...")
-print("=" * 55)
 
 response = client.chat.completions.create(
     model="gpt-4o-mini",
-    messages=messages,
-    tools=tools,
-    tool_choice="auto"
+    messages=messages
 )
 
-message = response.choices[0].message
-
-if message.tool_calls:
-    tool_call = message.tool_calls[0]
-    args = json.loads(tool_call.function.arguments)
-
-    print(f"GPT chose to run: {tool_call.function.name}")
-    print(f"Parameters GPT picked: {args}")
-    print("=" * 55)
-
-    # Run the actual simulation
-    result = run_inventory_sim(**args)
-
-    print("Simulation results:")
-    for key, value in result.items():
-        print(f"  {key}: {value}")
-    print("=" * 55)
-
-    # Send results back to GPT for analysis
-    messages.append(message)
-    messages.append({
-        "role": "tool",
-        "tool_call_id": tool_call.id,
-        "content": json.dumps(result)
-    })
-
-    final = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=messages
-    )
-
-    print("GPT's recommendation:")
-    print(final.choices[0].message.content)
-
-
-# ── NOW ASK GPT TO FIND A BETTER POLICY ─────────────────────
-print("\n" + "=" * 55)
-print("Asking GPT to find a better policy...")
-print("=" * 55)
-
-messages2 = [
-    {
-        "role": "system",
-        "content": "You are a supply chain analyst. You have access to an inventory simulation tool. Use it multiple times to test different policies and find the best one. Always run the simulation before giving advice."
-    },
-    {
-        "role": "user",
-        "content": "The current policy gives only 46.7% service level which is terrible. Run the simulation with these improved parameters: reorder_point=1500, order_quantity=2000, lead_time_days=7, demand_mean=200, demand_std=40. Then tell me if it is better." 
-    }
-]
-
-response2 = client.chat.completions.create(
-    model="gpt-4o-mini",
-    messages=messages2,
-    tools=tools,
-    tool_choice="auto"
-)
-
-message2 = response2.choices[0].message
-
-if message2.tool_calls:
-    tool_call2 = message2.tool_calls[0]
-    args2 = json.loads(tool_call2.function.arguments)
-
-    print(f"GPT is testing new policy: {args2}")
-    print("=" * 55)
-
-    result2 = run_inventory_sim(**args2)
-
-    print("New policy results:")
-    for key, value in result2.items():
-        print(f"  {key}: {value}")
-    print("=" * 55)
-
-    messages2.append(message2)
-    messages2.append({
-        "role": "tool",
-        "tool_call_id": tool_call2.id,
-        "content": json.dumps(result2)
-    })
-
-    final2 = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=messages2
-    )
-
-    print("GPT's comparison and final recommendation:")
-    print(final2.choices[0].message.content)
+print("\nGPT's analysis:")
+print(response.choices[0].message.content)
