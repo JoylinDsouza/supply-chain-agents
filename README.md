@@ -104,17 +104,17 @@ python agents/orchestrator.py
 
 ## Key findings
 
-**Simulation 1 — Inventory replenishment:**
+**Simulation 1 - Inventory replenishment:**
 The optimal reorder point (ROP=1000) minimises total cost at ~£44,180. The total cost curve is U-shaped — shortage cost dominates at low ROP, holding cost dominates at high ROP. A seasonal demand spike of 40% reveals that policies below ROP=800 fail disproportionately during peak periods.
 
-**Simulation 2 — Hub location:**
+**Simulation 2 - Hub location:**
 Poland is the lowest-risk entry point, financially justified at 10% demand growth (52% probability of profit). Germany requires 15-20% growth. At demand growth below 8%, no location is justified. The decision is fundamentally conditional on demand growth assumptions.
 
-**Simulation 3 — Supplier disruption:**
+**Simulation 3 - Supplier disruption:**
 Dual sourcing beats air freight above 8% annual disruption probability, costing ~£200k less per year at 25% probability. Safety stock maintains the highest service level (99%+) but costs over £2.5M annually — never cost-optimal. The crossover point between strategies is the key actionable insight.
 
 **Multi-agent system:**
-The Orchestrator combined cost and risk findings to produce conditional, threshold-based recommendations that neither agent could produce alone — for example: *proceed with Poland hub AND implement dual sourcing, but reassess if demand growth falls below 8% or disruption probability exceeds 20%.*
+The Orchestrator combined cost and risk findings to produce conditional, threshold-based recommendations that neither agent could produce alone - for example: *proceed with Poland hub AND implement dual sourcing, but reassess if demand growth falls below 8% or disruption probability exceeds 20%.*
 
 ---
 
@@ -129,5 +129,5 @@ The Orchestrator combined cost and risk findings to produce conditional, thresho
 Implements the ReAct pattern (Yao et al., 2022) in a multi-agent architecture (Wu et al., 2023). Uses chain-of-thought prompting (Wei et al., 2022) and tool calling (Schick et al., 2023).
 
 **Supervisor:** Prof. George Vogiatzis, Loughborough University  
-**Student:** Aadvik Tripathi  
+**Student:** Joylin Dsouza  
 **Programme:** MSc Artificial Intelligence (COP327)
