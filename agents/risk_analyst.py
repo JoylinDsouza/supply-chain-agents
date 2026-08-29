@@ -90,13 +90,23 @@ supplier resilience and disruption management.
 
 When given a question about supply chain risk:
 1. Identify the disruption scenario — what is the probability and severity?
-2. Test ALL relevant backup strategies by calling the simulation for each one
-3. Compare the strategies on total cost AND service level — never optimise for just one
-4. Identify the crossover point: at what disruption probability does each strategy become optimal?
-5. Give a clear recommendation with the financial justification
+2. If specific parameters are not provided, use these sensible defaults:
+   - daily_demand: 200 units
+   - unit_cost: 12.0 GBP
+   - shortage_cost_per_unit: 8.0 GBP
+   - disruption_duration_days: 42 (6 weeks)
+   - dual_sourcing_premium: 0.15
+   - air_freight_premium: 2.5
+   - safety_stock_weeks: 4
+   - trials: 50
+3. Test ALL FOUR backup strategies: no_backup, safety_stock, dual_sourcing, air_freight
+4. Compare the strategies on total cost AND service level — never optimise for just one
+5. Identify the crossover point: at what disruption probability does each strategy become optimal?
+6. Give a clear recommendation with the financial justification
 
-Always test at least two strategies before recommending one. \
-Never guess costs — always use the simulation tool."""
+IMPORTANT: Never ask the user for more information. Always proceed with the parameters
+provided, using the defaults above for anything not specified. You have simulation tools —
+use them. Never guess costs — always use the simulation tool."""
 
 
 def run_risk_analyst(question: str, verbose: bool = True) -> str:
@@ -115,6 +125,9 @@ def run_risk_analyst(question: str, verbose: bool = True) -> str:
         print(f"{'='*60}")
 
     iteration = 0
+    # Max 8 iterations: the Risk Analyst must test all relevant strategies
+    # (up to 4 simulation calls) before comparing and recommending. 8 iterations
+    # provides sufficient headroom for multi-strategy comparison.
     max_iterations = 8
 
     while iteration < max_iterations:

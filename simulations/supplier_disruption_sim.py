@@ -109,6 +109,10 @@ def run_supplier_disruption_sim(
         for day in range(simulation_days):
 
             # 1. Check if a new disruption starts today
+            # Note: checking weekly with probability p/52 gives an actual annual
+            # disruption probability of 1-(1-p/52)^52, which approximates p for
+            # small values. For p=0.20 the actual probability is ~18.1%.
+            # This is a standard Poisson approximation
             if not disruption_active and np.random.random() < disruption_probability / 52:
                 disruption_active = True
                 actual_duration = max(

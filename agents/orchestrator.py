@@ -77,14 +77,20 @@ high-level strategic decisions backed by rigorous quantitative analysis.
 When given a strategic question:
 1. Break it into sub-questions — what cost analysis is needed? what risk analysis is needed?
 2. Delegate each sub-question to the right specialist agent
-3. Wait for their findings before drawing conclusions
-4. Look for connections between the cost and risk findings
-5. Synthesise everything into a final strategic recommendation
-6. State clearly: what to do, why, and under what conditions the recommendation would change
+3. The specialist agents will run real simulations — do not ask for more information,
+   trust that they will use appropriate defaults for any unspecified parameters
+4. Wait for their findings before drawing conclusions
+5. Look for connections between the cost and risk findings
+6. Synthesise everything into a final strategic recommendation
+7. State clearly: what to do, why, and under what conditions the recommendation would change
+
+IMPORTANT: Never ask the user for more information. Always synthesise the findings
+from your specialist agents into a final recommendation, even if some parameters
+were assumed. The most valuable recommendations are conditional — they identify
+the specific thresholds and circumstances that change the decision.
 
 Your job is to find insights that neither the Cost Analyst nor the Risk Analyst \
-could find working alone. The most valuable recommendations are conditional — \
-they identify the specific thresholds and circumstances that change the decision."""
+could find working alone."""
 
 
 def run_orchestrator(question: str, verbose: bool = True) -> str:
@@ -113,7 +119,9 @@ def run_orchestrator(question: str, verbose: bool = True) -> str:
             messages=messages,
             tools=TOOLS,
             tool_choice="auto",
-            temperature=0.3
+            temperature=0.3    # Slightly higher than specialists (0.2) to allow more
+            # flexible synthesis reasoning when combining cost and risk findings.
+            # Still low enough to maintain analytical rigour.
         )
         message = response.choices[0].message
         messages.append(message)

@@ -114,7 +114,10 @@ def run_cost_analyst(question: str, verbose: bool = True) -> str:
         print(f"{'='*60}")
 
     iteration = 0
-    max_iterations = 6   # prevent infinite loops
+    # Max 6 iterations: agent typically needs 2-3 simulation calls plus
+    # a reasoning step before producing a final answer. 6 provides headroom
+    # without risking runaway API costs.
+    max_iterations = 6
 
     while iteration < max_iterations:
         iteration += 1
@@ -123,7 +126,8 @@ def run_cost_analyst(question: str, verbose: bool = True) -> str:
             messages=messages,
             tools=TOOLS,
             tool_choice="auto",
-            temperature=0.2    # low temperature for analytical tasks
+            temperature=0.2    # Low temperature (0.2) for deterministic, analytical outputs.
+            # Higher values introduce variability unsuitable for quantitative reasoning.
         )
         message = response.choices[0].message
         messages.append(message)

@@ -50,17 +50,23 @@ def run_hub_location_sim(
         cumulative = -build_cost_millions
         breakeven_year = None
 
-        for year in range(1, years + 1):
-            # Demand growth with Monte Carlo uncertainty
-            actual_growth = np.random.normal(demand_growth_rate, demand_uncertainty)
-            actual_growth = max(-0.20, actual_growth)  # floor at -20%
-            demand_multiplier = (1 + actual_growth) ** year
+                # Initialise demand index at 1.0 (current year = baseline)
+        demand_index = 1.0
 
-            # Annual freight saving grows as demand grows
+        for year in range(1, years + 1):
+            # Draw this year's actual growth rate from a normal distribution.
+            # Compound from the previous year's demand index rather than
+            # applying a fixed exponent — this correctly models uncertainty
+            # accumulating year-on-year rather than being anchored to year 0.
+            actual_growth = np.random.normal(demand_growth_rate, demand_uncertainty)
+            actual_growth = max(-0.20, actual_growth)  # floor downside at -20%
+            demand_index = demand_index * (1 + actual_growth)
+
+            # Annual freight saving scales with cumulative demand growth
             freight_saving = (
                 current_freight_cost_millions
                 * freight_saving_pct
-                * demand_multiplier
+                * demand_index
             )
 
             # Net annual benefit = saving minus running cost

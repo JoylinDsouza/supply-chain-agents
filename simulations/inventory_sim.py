@@ -198,7 +198,11 @@ def run_experiment(
     if reorder_points is None:
         reorder_points = [200, 400, 600, 800, 1000, 1200]
 
-    os.makedirs(os.path.dirname(csv_path), exist_ok=True)
+    # Resolve path relative to project root, not current working directory
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    abs_csv_path = os.path.join(project_root, csv_path)
+    os.makedirs(os.path.dirname(abs_csv_path), exist_ok=True)
+    csv_path = abs_csv_path
     all_results = []
 
     for rp in reorder_points:

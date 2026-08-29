@@ -19,6 +19,11 @@ from agents.risk_analyst import run_risk_analyst
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+# Fix working directory so results always save to the project root
+# regardless of where the script is called from
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.chdir(PROJECT_ROOT)
+
 os.makedirs("results/traces", exist_ok=True)
 os.makedirs("results/experiments", exist_ok=True)
 
@@ -214,20 +219,34 @@ def experiment_4():
 
 # ── Comparison summary table ──────────────────────────────────────────────────
 def save_comparison_table(results: list):
-    """Saves a CSV summary of all experiments for the dissertation table."""
+    """
+    Saves a structured comparison summary using the four evaluation dimensions
+    defined in the dissertation:
+    1. Quantitative grounding - specific numbers from computation
+    2. Threshold identification - specific decision boundaries
+    3. Conditionality - explicit conditions for the recommendation
+    4. Recommendation correctness - aligns with simulation ground truth
+    """
     path = "results/experiments/comparison_summary.csv"
     with open(path, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=[
-            "experiment", "domain", "agent_answer_length",
-            "baseline_answer_length", "agent_contains_numbers",
-            "baseline_contains_numbers", "agent_gives_specific_recommendation",
-            "baseline_gives_specific_recommendation"
+            "experiment",
+            "domain",
+            "agent_quantitative_grounding",
+            "agent_threshold_identification",
+            "agent_conditionality",
+            "agent_correctness",
+            "baseline_quantitative_grounding",
+            "baseline_threshold_identification",
+            "baseline_conditionality",
+            "baseline_correctness",
+            "agent_total_score",
+            "baseline_total_score"
         ])
         writer.writeheader()
         for r in results:
             writer.writerow(r)
     print(f"\nComparison table saved to: {path}")
-
 
 # ── Main: run all experiments ─────────────────────────────────────────────────
 if __name__ == "__main__":
@@ -238,53 +257,199 @@ if __name__ == "__main__":
 
     summary = []
 
-    # Run each experiment
+    # ── Evaluation helper functions ───────────────────────────────────────────
+    def score_quantitative_grounding(text: str) -> str:
+        """
+        Checks whether the response contains specific computed figures
+        (cost amounts, percentages, NPV values, years) rather than
+        general estimates. Returns Met, Partially Met, or Not Met.
+        """
+        import re
+        # Look for currency figures (£X,XXX or £X.XM), specific percentages,
+        # and year references that indicate real computed outputs
+        currency_pattern = r'£[\d,]+(\.\d+)?'
+        pct_pattern = r'\b\d+\.?\d*\s*%'
+        npv_pattern = r'NPV|net present value|break.?even'
+        has_currency = bool(re.search(currency_pattern, text))
+        has_percentage = bool(re.search(pct_pattern, text, re.IGNORECASE))
+        has_financial = bool(re.search(npv_pattern, text, re.IGNORECASE))
+        if has_currency and (has_percentage or has_financial):
+            return "Met"
+        elif has_currency or has_percentage:
+            return "Partially Met"
+        else:
+            return "Not Met"
+
+    def score_threshold_identification(text: str) -> str:
+        """
+        Checks whether the response identifies a specific numerical boundary
+        at which the recommendation changes — e.g. 'below 8% growth' or
+        'above 20% disruption probability'.
+        """
+        import re
+        threshold_patterns = [
+            r'below\s+\d+\.?\d*\s*%',
+            r'above\s+\d+\.?\d*\s*%',
+            r'less than\s+\d+\.?\d*\s*%',
+            r'more than\s+\d+\.?\d*\s*%',
+            r'exceed\w*\s+\d+\.?\d*\s*%',
+            r'fall\w*\s+below\s+\d+',
+            r'crossover',
+            r'threshold',
+            r'if.*growth.*falls',
+            r'if.*probability.*exceed',
+        ]
+        matches = sum(1 for p in threshold_patterns
+                      if re.search(p, text, re.IGNORECASE))
+        if matches >= 2:
+            return "Met"
+        elif matches == 1:
+            return "Partially Met"
+        else:
+            return "Not Met"
+
+    def score_conditionality(text: str) -> str:
+        """
+        Checks whether the recommendation explicitly states conditions
+        under which it applies or should be revisited.
+        """
+        import re
+        conditional_patterns = [
+            r'if.*demand.*growth',
+            r'if.*disruption',
+            r'provided.*confirm',
+            r'assuming.*growth',
+            r'should.*reassess',
+            r'reevaluat',
+            r'condition',
+            r'only if',
+            r'subject to',
+            r'contingent',
+        ]
+        matches = sum(1 for p in conditional_patterns
+                      if re.search(p, text, re.IGNORECASE))
+        if matches >= 2:
+            return "Met"
+        elif matches == 1:
+            return "Partially Met"
+        else:
+            return "Not Met"
+
+    def score_correctness(text: str, correct_answer_keywords: list) -> str:
+        """
+        Checks whether the recommendation aligns with the simulation
+        ground truth by looking for expected keywords in the response.
+        """
+        text_lower = text.lower()
+        matches = sum(1 for kw in correct_answer_keywords if kw in text_lower)
+        if matches >= len(correct_answer_keywords) // 2 + 1:
+            return "Met"
+        elif matches > 0:
+            return "Partially Met"
+        else:
+            return "Not Met"
+
+    def total_score(q, t, c, corr):
+        """Converts Met/Partially Met/Not Met to numeric score out of 4."""
+        def s(v):
+            return {"Met": 1, "Partially Met": 0.5, "Not Met": 0}.get(v, 0)
+        return s(q) + s(t) + s(c) + s(corr)
+
+    # ── Run experiments and score ─────────────────────────────────────────────
     exp1_agent, exp1_base = experiment_1()
+    e1_aq = score_quantitative_grounding(exp1_agent)
+    e1_at = score_threshold_identification(exp1_agent)
+    e1_ac = score_conditionality(exp1_agent)
+    e1_ar = score_correctness(exp1_agent, ["reorder point", "increase", "higher"])
+    e1_bq = score_quantitative_grounding(exp1_base)
+    e1_bt = score_threshold_identification(exp1_base)
+    e1_bc = score_conditionality(exp1_base)
+    e1_br = score_correctness(exp1_base, ["reorder point", "increase", "higher"])
     summary.append({
         "experiment": "Exp 1: Inventory policy",
         "domain": "Inventory replenishment",
-        "agent_answer_length": len(exp1_agent),
-        "baseline_answer_length": len(exp1_base),
-        "agent_contains_numbers": any(c.isdigit() for c in exp1_agent),
-        "baseline_contains_numbers": any(c.isdigit() for c in exp1_base),
-        "agent_gives_specific_recommendation": "recommend" in exp1_agent.lower(),
-        "baseline_gives_specific_recommendation": "recommend" in exp1_base.lower()
+        "agent_quantitative_grounding": e1_aq,
+        "agent_threshold_identification": e1_at,
+        "agent_conditionality": e1_ac,
+        "agent_correctness": e1_ar,
+        "baseline_quantitative_grounding": e1_bq,
+        "baseline_threshold_identification": e1_bt,
+        "baseline_conditionality": e1_bc,
+        "baseline_correctness": e1_br,
+        "agent_total_score": total_score(e1_aq, e1_at, e1_ac, e1_ar),
+        "baseline_total_score": total_score(e1_bq, e1_bt, e1_bc, e1_br),
     })
 
     exp2_agent, exp2_base = experiment_2()
+    e2_aq = score_quantitative_grounding(exp2_agent)
+    e2_at = score_threshold_identification(exp2_agent)
+    e2_ac = score_conditionality(exp2_agent)
+    e2_ar = score_correctness(exp2_agent, ["poland", "positive", "npv"])
+    e2_bq = score_quantitative_grounding(exp2_base)
+    e2_bt = score_threshold_identification(exp2_base)
+    e2_bc = score_conditionality(exp2_base)
+    e2_br = score_correctness(exp2_base, ["poland"])
     summary.append({
         "experiment": "Exp 2: Hub location",
         "domain": "Hub location investment",
-        "agent_answer_length": len(exp2_agent),
-        "baseline_answer_length": len(exp2_base),
-        "agent_contains_numbers": any(c.isdigit() for c in exp2_agent),
-        "baseline_contains_numbers": any(c.isdigit() for c in exp2_base),
-        "agent_gives_specific_recommendation": "recommend" in exp2_agent.lower(),
-        "baseline_gives_specific_recommendation": "recommend" in exp2_base.lower()
+        "agent_quantitative_grounding": e2_aq,
+        "agent_threshold_identification": e2_at,
+        "agent_conditionality": e2_ac,
+        "agent_correctness": e2_ar,
+        "baseline_quantitative_grounding": e2_bq,
+        "baseline_threshold_identification": e2_bt,
+        "baseline_conditionality": e2_bc,
+        "baseline_correctness": e2_br,
+        "agent_total_score": total_score(e2_aq, e2_at, e2_ac, e2_ar),
+        "baseline_total_score": total_score(e2_bq, e2_bt, e2_bc, e2_br),
     })
 
     exp3_agent, exp3_base = experiment_3()
+    e3_aq = score_quantitative_grounding(exp3_agent)
+    e3_at = score_threshold_identification(exp3_agent)
+    e3_ac = score_conditionality(exp3_agent)
+    e3_ar = score_correctness(exp3_agent, ["dual sourcing", "dual_sourcing"])
+    e3_bq = score_quantitative_grounding(exp3_base)
+    e3_bt = score_threshold_identification(exp3_base)
+    e3_bc = score_conditionality(exp3_base)
+    e3_br = score_correctness(exp3_base, ["dual sourcing"])
     summary.append({
         "experiment": "Exp 3: Supplier resilience",
         "domain": "Supplier disruption",
-        "agent_answer_length": len(exp3_agent),
-        "baseline_answer_length": len(exp3_base),
-        "agent_contains_numbers": any(c.isdigit() for c in exp3_agent),
-        "baseline_contains_numbers": any(c.isdigit() for c in exp3_base),
-        "agent_gives_specific_recommendation": "recommend" in exp3_agent.lower(),
-        "baseline_gives_specific_recommendation": "recommend" in exp3_base.lower()
+        "agent_quantitative_grounding": e3_aq,
+        "agent_threshold_identification": e3_at,
+        "agent_conditionality": e3_ac,
+        "agent_correctness": e3_ar,
+        "baseline_quantitative_grounding": e3_bq,
+        "baseline_threshold_identification": e3_bt,
+        "baseline_conditionality": e3_bc,
+        "baseline_correctness": e3_br,
+        "agent_total_score": total_score(e3_aq, e3_at, e3_ac, e3_ar),
+        "baseline_total_score": total_score(e3_bq, e3_bt, e3_bc, e3_br),
     })
 
     exp4_agent, exp4_base = experiment_4()
+    e4_aq = score_quantitative_grounding(exp4_agent)
+    e4_at = score_threshold_identification(exp4_agent)
+    e4_ac = score_conditionality(exp4_agent)
+    e4_ar = score_correctness(exp4_agent, ["poland", "dual sourcing", "proceed"])
+    e4_bq = score_quantitative_grounding(exp4_base)
+    e4_bt = score_threshold_identification(exp4_base)
+    e4_bc = score_conditionality(exp4_base)
+    e4_br = score_correctness(exp4_base, ["poland", "dual sourcing"])
     summary.append({
         "experiment": "Exp 4: Strategic orchestrator",
         "domain": "Combined cost and risk",
-        "agent_answer_length": len(exp4_agent),
-        "baseline_answer_length": len(exp4_base),
-        "agent_contains_numbers": any(c.isdigit() for c in exp4_agent),
-        "baseline_contains_numbers": any(c.isdigit() for c in exp4_base),
-        "agent_gives_specific_recommendation": "recommend" in exp4_agent.lower(),
-        "baseline_gives_specific_recommendation": "recommend" in exp4_base.lower()
+        "agent_quantitative_grounding": e4_aq,
+        "agent_threshold_identification": e4_at,
+        "agent_conditionality": e4_ac,
+        "agent_correctness": e4_ar,
+        "baseline_quantitative_grounding": e4_bq,
+        "baseline_threshold_identification": e4_bt,
+        "baseline_conditionality": e4_bc,
+        "baseline_correctness": e4_br,
+        "agent_total_score": total_score(e4_aq, e4_at, e4_ac, e4_ar),
+        "baseline_total_score": total_score(e4_bq, e4_bt, e4_bc, e4_br),
     })
 
     save_comparison_table(summary)
