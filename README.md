@@ -601,30 +601,3 @@ Supervisor: Prof. George Vogiatzis
 Student: Joylin Dsouza
 
 Project: GV-13
-
-Repository
-
-GitHub:
-
-https://github.com/JoylinDsouza/supply-chain-agents
-
-
-### One important thing
-
-I deliberately removed claims from your old README such as:
-
-> "ROP=1000 minimises total cost at ~£44,180"
-
-and:
-
-> "Dual sourcing beats air freight above 8% annual disruption probability"
-
-and:
-
-> "proceed with Poland hub AND implement dual sourcing, but reassess if demand growth falls below 8% or disruption probability exceeds 20%."
-
-Those statements **don't line up cleanly with your final controlled experiments**, so keeping them would create an unnecessary vulnerability if your examiner checks the README against the code.
-
-I also changed **"optimal"** to **"lowest-cost feasible policy within the evaluated search space"**, which is the technically defensible wording for your optimiser.
-
-One final practical point: because your README contains the GitHub repository URL, if you are publishing 
