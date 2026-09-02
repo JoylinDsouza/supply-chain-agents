@@ -1,0 +1,276 @@
+{
+  "metadata": {
+    "model": "gpt-4o-mini",
+    "baseline_temperature": 0.2,
+    "simulation_trials": 1000,
+    "simulation_seed": 42,
+    "service_level_target": 95.0,
+    "evaluation_framework": {
+      "qualitative_score": "Secondary descriptive measure",
+      "quantitative_grounding": "Checks whether important independent simulation values are reported",
+      "objective_metrics": "Primary decision-level evaluation",
+      "inventory_regret": "Independent simulation of extracted LLM-recommended inventory policy",
+      "resilience_evaluation": "Pareto efficiency rather than forced unique optimum for cost-service trade-off"
+    }
+  },
+  "experiments": [
+    {
+      "experiment_id": 1,
+      "experiment_name": "Inventory policy",
+      "agent_qualitative_score": 2.5,
+      "baseline_qualitative_score": 2.0,
+      "agent_quantitative_grounding": {
+        "status": "Partially Met",
+        "matched": 4,
+        "total": 6,
+        "details": [
+          {
+            "metric": "reorder_point",
+            "expected": 1500,
+            "matched": true
+          },
+          {
+            "metric": "order_quantity",
+            "expected": 1500,
+            "matched": true
+          },
+          {
+            "metric": "service_level_pct",
+            "expected": 96.7,
+            "matched": true
+          },
+          {
+            "metric": "fill_rate_pct",
+            "expected": 97.9,
+            "matched": false
+          },
+          {
+            "metric": "total_cost_gbp",
+            "expected": 50134.35,
+            "matched": false
+          },
+          {
+            "metric": "stockout_days",
+            "expected": 2.98,
+            "matched": true
+          }
+        ]
+      },
+      "baseline_quantitative_grounding": {
+        "status": "Not Met",
+        "matched": 1,
+        "total": 6,
+        "details": [
+          {
+            "metric": "reorder_point",
+            "expected": 1500,
+            "matched": false
+          },
+          {
+            "metric": "order_quantity",
+            "expected": 1500,
+            "matched": false
+          },
+          {
+            "metric": "service_level_pct",
+            "expected": 96.7,
+            "matched": false
+          },
+          {
+            "metric": "fill_rate_pct",
+            "expected": 97.9,
+            "matched": false
+          },
+          {
+            "metric": "total_cost_gbp",
+            "expected": 50134.35,
+            "matched": false
+          },
+          {
+            "metric": "stockout_days",
+            "expected": 2.98,
+            "matched": true
+          }
+        ]
+      },
+      "agent_conditionality": "Partially Met",
+      "baseline_conditionality": "Met",
+      "agent_threshold_identification": "Met",
+      "baseline_threshold_identification": "Met",
+      "agent_objective_metrics": {
+        "recommended_rop": null,
+        "recommended_order_quantity": null,
+        "policy_extracted": false,
+        "policy_exact_match": null,
+        "independent_service_level_pct": null,
+        "constraint_violation_pct_points": null,
+        "constraint_satisfied": null,
+        "independent_total_cost_gbp": null,
+        "regret_gbp": null,
+        "regret_pct": null
+      },
+      "baseline_objective_metrics": {
+        "recommended_rop": null,
+        "recommended_order_quantity": 1000.0,
+        "policy_extracted": false,
+        "policy_exact_match": null,
+        "independent_service_level_pct": null,
+        "constraint_violation_pct_points": null,
+        "constraint_satisfied": null,
+        "independent_total_cost_gbp": null,
+        "regret_gbp": null,
+        "regret_pct": null
+      }
+    },
+    {
+      "experiment_id": 2,
+      "experiment_name": "Hub location",
+      "agent_qualitative_score": 2.0,
+      "baseline_qualitative_score": 1.0,
+      "agent_quantitative_grounding": {
+        "status": "Not Available",
+        "matched": 0,
+        "total": 0,
+        "details": []
+      },
+      "baseline_quantitative_grounding": {
+        "status": "Not Available",
+        "matched": 0,
+        "total": 0,
+        "details": []
+      },
+      "agent_conditionality": "Met",
+      "baseline_conditionality": "Met",
+      "agent_threshold_identification": "Met",
+      "baseline_threshold_identification": "Not Met",
+      "agent_objective_metrics": {
+        "recommended_location": "Poland",
+        "investment_decision": "do_not_invest",
+        "expected_location": "Poland",
+        "expected_decision": "do_not_invest",
+        "location_correct": true,
+        "decision_correct": true
+      },
+      "baseline_objective_metrics": {
+        "recommended_location": "Poland",
+        "investment_decision": "proceed",
+        "expected_location": "Poland",
+        "expected_decision": "do_not_invest",
+        "location_correct": true,
+        "decision_correct": false
+      }
+    },
+    {
+      "experiment_id": 3,
+      "experiment_name": "Supplier resilience",
+      "agent_qualitative_score": 1.0,
+      "baseline_qualitative_score": 0.5,
+      "agent_quantitative_grounding": {
+        "status": "Not Available",
+        "matched": 0,
+        "total": 0,
+        "details": []
+      },
+      "baseline_quantitative_grounding": {
+        "status": "Not Available",
+        "matched": 0,
+        "total": 0,
+        "details": []
+      },
+      "agent_conditionality": "Met",
+      "baseline_conditionality": "Partially Met",
+      "agent_threshold_identification": "Not Met",
+      "baseline_threshold_identification": "Not Met",
+      "agent_objective_metrics": {
+        "recommended_strategy": "dual_sourcing",
+        "pareto_efficient": true,
+        "pareto_frontier": [
+          "no_backup",
+          "safety_stock",
+          "dual_sourcing",
+          "air_freight"
+        ],
+        "selected_reference_total_cost_gbp": 0.0,
+        "selected_reference_service_level_pct": 0.0
+      },
+      "baseline_objective_metrics": {
+        "recommended_strategy": "safety_stock",
+        "pareto_efficient": true,
+        "pareto_frontier": [
+          "no_backup",
+          "safety_stock",
+          "dual_sourcing",
+          "air_freight"
+        ],
+        "selected_reference_total_cost_gbp": 0.0,
+        "selected_reference_service_level_pct": 0.0
+      }
+    },
+    {
+      "experiment_id": 4,
+      "experiment_name": "Strategic orchestrator",
+      "agent_qualitative_score": 2.0,
+      "baseline_qualitative_score": 0.5,
+      "agent_quantitative_grounding": {
+        "status": "Not Available",
+        "matched": 0,
+        "total": 0,
+        "details": []
+      },
+      "baseline_quantitative_grounding": {
+        "status": "Not Available",
+        "matched": 0,
+        "total": 0,
+        "details": []
+      },
+      "agent_conditionality": "Met",
+      "baseline_conditionality": "Partially Met",
+      "agent_threshold_identification": "Met",
+      "baseline_threshold_identification": "Not Met",
+      "agent_objective_metrics": {
+        "hub": {
+          "recommended_location": "Poland",
+          "investment_decision": "proceed",
+          "expected_location": "Poland",
+          "expected_decision": "proceed",
+          "location_correct": true,
+          "decision_correct": true
+        },
+        "resilience": {
+          "recommended_strategy": "dual_sourcing",
+          "pareto_efficient": true,
+          "pareto_frontier": [
+            "no_backup",
+            "safety_stock",
+            "dual_sourcing",
+            "air_freight"
+          ],
+          "selected_reference_total_cost_gbp": 0.0,
+          "selected_reference_service_level_pct": 0.0
+        }
+      },
+      "baseline_objective_metrics": {
+        "hub": {
+          "recommended_location": "Poland",
+          "investment_decision": "proceed",
+          "expected_location": "Poland",
+          "expected_decision": "proceed",
+          "location_correct": true,
+          "decision_correct": true
+        },
+        "resilience": {
+          "recommended_strategy": "safety_stock",
+          "pareto_efficient": true,
+          "pareto_frontier": [
+            "no_backup",
+            "safety_stock",
+            "dual_sourcing",
+            "air_freight"
+          ],
+          "selected_reference_total_cost_gbp": 0.0,
+          "selected_reference_service_level_pct": 0.0
+        }
+      }
+    }
+  ]
+}

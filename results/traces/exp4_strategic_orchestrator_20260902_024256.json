@@ -1,0 +1,139 @@
+{
+  "experiment_id": 4,
+  "experiment_name": "Strategic orchestrator",
+  "question": "We are considering opening a distribution hub in Poland (£7M build\ncost, £1.6M annual operating cost, 13% freight saving on £12M annual\nfreight spend, 12% annual demand growth). Use an 8% cost of capital and\na 10-year evaluation horizon. Our supplier in the region has a 20%\nannual disruption probability with disruptions lasting around 6 weeks.\n\nShould we proceed with the hub, and what resilience strategy should we\nimplement alongside it? Give a complete strategic recommendation.",
+  "agent_answer": "### Executive Recommendation\n\n1. **Overall Decision**: Proceed with the investment in the distribution hub in Poland, conditional on confirming demand growth.\n\n2. **Cost / Investment Evidence**:\n   - **Build Cost**: £7 million\n   - **Annual Operating Cost**: £1.6 million\n   - **Freight Savings**: 13% on £12 million annual freight spend\n   - **Average NPV**: £1.37 million, with a 77% probability of profitability.\n   - **Average Break-even Year**: 7.9 years, indicating a reasonable timeframe for recovery.\n\n3. **Risk / Resilience Evidence**:\n   - **Disruption Probability**: 20% annually, with disruptions lasting around 6 weeks.\n   - **Recommended Resilience Strategy**: **Dual Sourcing**\n     - **Total Cost**: £1,551,851.81\n     - **Service Level**: 97.79%\n     - **Average Units Short**: 1,442.31\n     - This strategy balances cost and service level effectively, minimizing shortage costs while maintaining resilience.\n\n4. **Integrated Trade-off**:\n   - The investment in the hub is financially attractive, but the effectiveness of the hub could be compromised by supplier disruptions. Implementing dual sourcing mitigates this risk while keeping costs manageable.\n\n5. **Recommended Action**:\n   - Proceed with the hub investment and implement a dual sourcing strategy for suppliers to enhance resilience against disruptions.\n\n6. **Conditions that Would Cause the Recommendation to Change**:\n   - If demand growth does not materialize as anticipated, or if the disruption probability increases significantly beyond the 20% threshold, the financial viability of the hub investment and the chosen resilience strategy should be re-evaluated.\n\nThis recommendation is based on simulation-backed findings and is contingent on the assumptions and scenarios evaluated.",
+  "baseline_answer": "To evaluate whether to proceed with opening a distribution hub in Poland, we need to analyze the financial implications and consider the associated risks, particularly the disruption probability from the supplier.\n\n### Financial Analysis\n\n1. **Initial Investment**: £7M (build cost).\n2. **Annual Operating Cost**: £1.6M.\n3. **Annual Freight Spend**: £12M.\n4. **Freight Savings**: 13% of £12M = £1.56M annually.\n5. **Net Annual Benefit**: \n   - Freight savings: £1.56M\n   - Operating costs: -£1.6M\n   - Net benefit = £1.56M - £1.6M = -£0.04M (or -£40,000 annually).\n\n6. **Present Value of Costs and Benefits**:\n   - The net annual benefit is negative, indicating a loss. However, we need to calculate the present value (PV) of costs and benefits over 10 years using an 8% discount rate.\n   - The formula for the present value of an annuity is:\n     \\[\n     PV = C \\times \\left(\\frac{1 - (1 + r)^{-n}}{r}\\right)\n     \\]\n     where \\(C\\) is the annual cash flow, \\(r\\) is the discount rate, and \\(n\\) is the number of years.\n\n   - For the operating costs and freight savings:\n     - Operating costs PV: £1.6M × PV factor (8%, 10 years) = £1.6M × 6.7101 = £10.73616M.\n     - Freight savings PV: £1.56M × PV factor (8%, 10 years) = £1.56M × 6.7101 = £10.48M.\n\n   - Total PV of costs = £10.73616M + £7M (initial investment) = £17.73616M.\n   - Total PV of benefits = £10.48M.\n\n   - Net Present Value (NPV) = Total PV of Benefits - Total PV of Costs = £10.48M - £17.73616M = -£7.25616M.\n\n### Conclusion on Financial Viability\nThe NPV is negative, indicating that the project is not financially viable under the current assumptions. \n\n### Resilience Strategy\nGiven the 20% annual disruption probability from the supplier, it is crucial to implement a resilience strategy alongside the hub:\n\n1. **Diversification of Suppliers**: Establish relationships with multiple suppliers to mitigate the risk of disruption. This could include local suppliers in Poland and alternative suppliers in other regions.\n\n2. **Inventory Buffer**: Maintain a safety stock or buffer inventory to cover potential disruptions. This would help ensure that demand can still be met during supplier disruptions.\n\n3. **Flexible Logistics**: Develop flexible logistics options, such as alternative transportation routes or modes, to quickly adapt to disruptions.\n\n4. **Supplier Performance Monitoring**: Implement a robust supplier performance monitoring system to identify potential risks early and take proactive measures.\n\n5. **Contingency Planning**: Create a detailed contingency plan that outlines steps to take in the event of a disruption, including communication strategies and resource allocation.\n\n### Recommendation\nBased on the financial analysis and the disruption risks, I recommend **not proceeding with the distribution hub in Poland** unless significant changes can be made to improve the financial viability (e.g., reducing costs, increasing freight savings, or securing better terms with suppliers). If the hub is pursued, implement the resilience strategies outlined to mitigate the risks associated with supplier disruptions.",
+  "ground_truth": {
+    "hub": {
+      "simulation": "hub_location",
+      "parameters": {
+        "candidate_location": "Poland",
+        "build_cost_millions": 7,
+        "annual_ops_cost_millions": 1.6,
+        "current_freight_cost_millions": 12,
+        "freight_saving_pct": 0.13,
+        "demand_growth_rate": 0.12,
+        "demand_uncertainty": 0.05,
+        "discount_rate": 0.08,
+        "years": 10,
+        "trials": 1000,
+        "seed": 42
+      },
+      "results": {
+        "avg_npv_millions": 1.37,
+        "npv_p10_millions": -0.771,
+        "npv_p90_millions": 3.677,
+        "avg_breakeven_year": 7.9,
+        "probability_profitable_pct": 77.0,
+        "recommendation": "CONDITIONAL — invest only if demand growth confirmed",
+        "avg_annual_cashflows": [
+          0.146,
+          0.358,
+          0.59,
+          0.85,
+          1.146,
+          1.469,
+          1.835,
+          2.244,
+          2.705,
+          3.222
+        ]
+      },
+      "expected_location": "Poland",
+      "expected_decision": "proceed"
+    },
+    "resilience": {
+      "strategies": {
+        "no_backup": {
+          "total_cost_gbp": 0.0,
+          "service_level_pct": 0.0
+        },
+        "safety_stock": {
+          "total_cost_gbp": 0.0,
+          "service_level_pct": 0.0
+        },
+        "dual_sourcing": {
+          "total_cost_gbp": 0.0,
+          "service_level_pct": 0.0
+        },
+        "air_freight": {
+          "total_cost_gbp": 0.0,
+          "service_level_pct": 0.0
+        }
+      }
+    }
+  },
+  "evaluation": {
+    "agent_qualitative_score": 2.0,
+    "baseline_qualitative_score": 0.5,
+    "agent_quantitative_grounding": {
+      "status": "Not Available",
+      "matched": 0,
+      "total": 0,
+      "details": []
+    },
+    "baseline_quantitative_grounding": {
+      "status": "Not Available",
+      "matched": 0,
+      "total": 0,
+      "details": []
+    },
+    "agent_conditionality": "Met",
+    "baseline_conditionality": "Partially Met",
+    "agent_threshold_identification": "Met",
+    "baseline_threshold_identification": "Not Met",
+    "agent_objective_metrics": {
+      "hub": {
+        "recommended_location": "Poland",
+        "investment_decision": "proceed",
+        "expected_location": "Poland",
+        "expected_decision": "proceed",
+        "location_correct": true,
+        "decision_correct": true
+      },
+      "resilience": {
+        "recommended_strategy": "dual_sourcing",
+        "pareto_efficient": true,
+        "pareto_frontier": [
+          "no_backup",
+          "safety_stock",
+          "dual_sourcing",
+          "air_freight"
+        ],
+        "selected_reference_total_cost_gbp": 0.0,
+        "selected_reference_service_level_pct": 0.0
+      }
+    },
+    "baseline_objective_metrics": {
+      "hub": {
+        "recommended_location": "Poland",
+        "investment_decision": "proceed",
+        "expected_location": "Poland",
+        "expected_decision": "proceed",
+        "location_correct": true,
+        "decision_correct": true
+      },
+      "resilience": {
+        "recommended_strategy": "safety_stock",
+        "pareto_efficient": true,
+        "pareto_frontier": [
+          "no_backup",
+          "safety_stock",
+          "dual_sourcing",
+          "air_freight"
+        ],
+        "selected_reference_total_cost_gbp": 0.0,
+        "selected_reference_service_level_pct": 0.0
+      }
+    }
+  },
+  "metadata": {
+    "model": "gpt-4o-mini",
+    "baseline_temperature": 0.2,
+    "simulation_trials": 1000,
+    "simulation_seed": 42,
+    "service_level_target": 95.0,
+    "timestamp": "2026-09-02T02:42:56.056456"
+  }
+}

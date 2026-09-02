@@ -1,0 +1,131 @@
+{
+  "experiment_id": 2,
+  "experiment_name": "Hub location",
+  "question": "We are a UK retailer considering opening a European distribution hub.\nWe have two options: Germany (£12M to build, £2.5M annual operating\ncost, saves 18% of our £12M freight spend) or Poland (£7M to build,\n£1.6M annual operating cost, saves 13% of our £12M freight spend).\nWe expect 12% annual demand growth. Our cost of capital is 8%.\nEvaluate both options over a 10-year horizon. Which location is the\nbetter investment and why?",
+  "agent_answer": "### Evaluation of Distribution Hub Options\n\n#### Germany\n- **Average NPV**: -£2.321 million\n- **P10 NPV**: -£5.285 million\n- **P90 NPV**: £0.874 million\n- **Average Break-even Year**: 9.3 years\n- **Probability of Profitability**: 16.4%\n- **Recommendation**: **DO NOT INVEST** — insufficient return\n- **Average Annual Cash Flows**: \n  - Year 1: -£0.082 million\n  - Year 2: £0.211 million\n  - Year 3: £0.532 million\n  - Year 4: £0.892 million\n  - Year 5: £1.301 million\n  - Year 6: £1.750 million\n  - Year 7: £2.256 million\n  - Year 8: £2.823 million\n  - Year 9: £3.461 million\n  - Year 10: £4.177 million\n\n#### Poland\n- **Average NPV**: £1.37 million\n- **P10 NPV**: -£0.771 million\n- **P90 NPV**: £3.677 million\n- **Average Break-even Year**: 7.9 years\n- **Probability of Profitability**: 77.0%\n- **Recommendation**: **CONDITIONAL** — invest only if demand growth is confirmed\n- **Average Annual Cash Flows**: \n  - Year 1: £0.146 million\n  - Year 2: £0.358 million\n  - Year 3: £0.590 million\n  - Year 4: £0.850 million\n  - Year 5: £1.146 million\n  - Year 6: £1.469 million\n  - Year 7: £1.835 million\n  - Year 8: £2.244 million\n  - Year 9: £2.705 million\n  - Year 10: £3.222 million\n\n### Conclusion\n**Poland** is the better investment option based on the simulation results. It shows a positive average NPV, a higher probability of profitability, and a shorter average break-even period compared to Germany. However, the investment in Poland is conditional on confirming demand growth, while Germany presents a clear recommendation against investment due to insufficient returns.",
+  "baseline_answer": "To evaluate the two options for your European distribution hub, we will calculate the total costs and savings over a 10-year horizon for both Germany and Poland. We will consider the initial investment, annual operating costs, freight savings, and the time value of money using the cost of capital.\n\n### Assumptions:\n1. The freight spend is fixed at £12M annually.\n2. Demand growth is not directly affecting the freight spend in this analysis.\n3. The cost of capital is 8%.\n4. The analysis will use a discount factor to account for the time value of money.\n\n### Option 1: Germany\n- **Initial Investment**: £12M\n- **Annual Operating Cost**: £2.5M\n- **Freight Savings**: 18% of £12M = £2.16M annually\n\n#### Net Annual Cost Calculation:\n- Annual Operating Cost: £2.5M\n- Less Freight Savings: £2.16M\n- **Net Annual Cost**: £2.5M - £2.16M = £0.34M\n\n#### Present Value of Costs:\n1. **Initial Investment**: £12M (at Year 0)\n2. **Net Annual Cost**: £0.34M for Years 1 to 10\n\nUsing the formula for the present value of an annuity:\n\\[\nPV = C \\times \\left( \\frac{1 - (1 + r)^{-n}}{r} \\right)\n\\]\nWhere:\n- \\(C\\) = net annual cost (£0.34M)\n- \\(r\\) = cost of capital (0.08)\n- \\(n\\) = number of years (10)\n\nCalculating the present value of the net annual costs:\n\\[\nPV = 0.34M \\times \\left( \\frac{1 - (1 + 0.08)^{-10}}{0.08} \\right) \\approx 0.34M \\times 6.7101 \\approx 2.28M\n\\]\n\nTotal Present Value for Germany:\n\\[\nTotal PV = Initial Investment + PV of Net Annual Costs = 12M + 2.28M = 14.28M\n\\]\n\n### Option 2: Poland\n- **Initial Investment**: £7M\n- **Annual Operating Cost**: £1.6M\n- **Freight Savings**: 13% of £12M = £1.56M annually\n\n#### Net Annual Cost Calculation:\n- Annual Operating Cost: £1.6M\n- Less Freight Savings: £1.56M\n- **Net Annual Cost**: £1.6M - £1.56M = £0.04M\n\n#### Present Value of Costs:\n1. **Initial Investment**: £7M (at Year 0)\n2. **Net Annual Cost**: £0.04M for Years 1 to 10\n\nCalculating the present value of the net annual costs:\n\\[\nPV = 0.04M \\times \\left( \\frac{1 - (1 + 0.08)^{-10}}{0.08} \\right) \\approx 0.04M \\times 6.7101 \\approx 0.27M\n\\]\n\nTotal Present Value for Poland:\n\\[\nTotal PV = Initial Investment + PV of Net Annual Costs = 7M + 0.27M = 7.27M\n\\]\n\n### Summary of Results:\n- **Total Present Value for Germany**: £14.28M\n- **Total Present Value for Poland**: £7.27M\n\n### Recommendation:\nBased on the present value analysis, Poland is the better investment option with a total present value of £7.27M compared to Germany's £14.28M. The lower initial investment, reduced operating costs, and reasonable freight savings make Poland a more financially attractive choice over the 10-year horizon.\n\n### Uncertainty:\nKeep in mind that this analysis assumes constant freight costs and does not account for potential changes in demand or other operational risks. It is advisable to conduct a sensitivity analysis to understand how variations in these assumptions may impact the overall decision.",
+  "ground_truth": {
+    "Germany": {
+      "simulation": "hub_location",
+      "parameters": {
+        "candidate_location": "Germany",
+        "build_cost_millions": 12,
+        "annual_ops_cost_millions": 2.5,
+        "current_freight_cost_millions": 12,
+        "freight_saving_pct": 0.18,
+        "demand_growth_rate": 0.12,
+        "demand_uncertainty": 0.05,
+        "discount_rate": 0.08,
+        "years": 10,
+        "trials": 1000,
+        "seed": 42
+      },
+      "results": {
+        "avg_npv_millions": -2.321,
+        "npv_p10_millions": -5.285,
+        "npv_p90_millions": 0.874,
+        "avg_breakeven_year": 9.3,
+        "probability_profitable_pct": 16.4,
+        "recommendation": "DO NOT INVEST — insufficient return",
+        "avg_annual_cashflows": [
+          -0.082,
+          0.211,
+          0.532,
+          0.892,
+          1.301,
+          1.75,
+          2.256,
+          2.823,
+          3.461,
+          4.177
+        ]
+      }
+    },
+    "Poland": {
+      "simulation": "hub_location",
+      "parameters": {
+        "candidate_location": "Poland",
+        "build_cost_millions": 7,
+        "annual_ops_cost_millions": 1.6,
+        "current_freight_cost_millions": 12,
+        "freight_saving_pct": 0.13,
+        "demand_growth_rate": 0.12,
+        "demand_uncertainty": 0.05,
+        "discount_rate": 0.08,
+        "years": 10,
+        "trials": 1000,
+        "seed": 42
+      },
+      "results": {
+        "avg_npv_millions": 1.37,
+        "npv_p10_millions": -0.771,
+        "npv_p90_millions": 3.677,
+        "avg_breakeven_year": 7.9,
+        "probability_profitable_pct": 77.0,
+        "recommendation": "CONDITIONAL — invest only if demand growth confirmed",
+        "avg_annual_cashflows": [
+          0.146,
+          0.358,
+          0.59,
+          0.85,
+          1.146,
+          1.469,
+          1.835,
+          2.244,
+          2.705,
+          3.222
+        ]
+      }
+    },
+    "expected_location": "Poland",
+    "expected_decision": "do_not_invest",
+    "avg_npv_millions": {
+      "Germany": null,
+      "Poland": null
+    }
+  },
+  "evaluation": {
+    "agent_qualitative_score": 2.0,
+    "baseline_qualitative_score": 1.0,
+    "agent_quantitative_grounding": {
+      "status": "Not Available",
+      "matched": 0,
+      "total": 0,
+      "details": []
+    },
+    "baseline_quantitative_grounding": {
+      "status": "Not Available",
+      "matched": 0,
+      "total": 0,
+      "details": []
+    },
+    "agent_conditionality": "Met",
+    "baseline_conditionality": "Met",
+    "agent_threshold_identification": "Met",
+    "baseline_threshold_identification": "Not Met",
+    "agent_objective_metrics": {
+      "recommended_location": "Poland",
+      "investment_decision": "do_not_invest",
+      "expected_location": "Poland",
+      "expected_decision": "do_not_invest",
+      "location_correct": true,
+      "decision_correct": true
+    },
+    "baseline_objective_metrics": {
+      "recommended_location": "Poland",
+      "investment_decision": "proceed",
+      "expected_location": "Poland",
+      "expected_decision": "do_not_invest",
+      "location_correct": true,
+      "decision_correct": false
+    }
+  },
+  "metadata": {
+    "model": "gpt-4o-mini",
+    "baseline_temperature": 0.2,
+    "simulation_trials": 1000,
+    "simulation_seed": 42,
+    "service_level_target": 95.0,
+    "timestamp": "2026-09-02T02:41:33.816792"
+  }
+}

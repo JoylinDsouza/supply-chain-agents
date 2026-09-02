@@ -1,0 +1,84 @@
+{
+  "configuration": {
+    "inventory_simulation_trials": 1000,
+    "inventory_base_seed": 42,
+    "inventory_service_target_pct": 95.0,
+    "disruption_duration_days": 42,
+    "disruption_daily_demand": 200,
+    "disruption_unit_cost": 10,
+    "disruption_shortage_cost_per_unit": 50,
+    "resilience_service_target_pct": 95.0,
+    "n_replications": 100,
+    "n_bootstrap": 2000,
+    "confidence_level": 0.95
+  },
+  "inventory_selected_policy": {
+    "reorder_point": 1750,
+    "order_quantity": 1500,
+    "n_replications": 100,
+    "simulation_trials_per_replication": 1000,
+    "service_target_pct": 95.0,
+    "service_level_pct": {
+      "lower_95ci": 96.05,
+      "mean": 96.05,
+      "upper_95ci": 96.06
+    },
+    "total_cost_gbp": {
+      "lower_95ci": 57788.05,
+      "mean": 57793.15,
+      "upper_95ci": 57797.99
+    },
+    "holding_cost_gbp": {
+      "lower_95ci": 53632.1,
+      "mean": 53640.52,
+      "upper_95ci": 53648.75
+    },
+    "shortage_cost_gbp": {
+      "lower_95ci": 2985.39,
+      "mean": 2988.72,
+      "upper_95ci": 2992.06
+    }
+  },
+  "disruption_strategy_comparison": {
+    "no_backup": {
+      "total_cost_gbp": {
+        "lower_95ci": 1471113.19,
+        "mean": 1483372.44,
+        "upper_95ci": 1496624.33
+      },
+      "service_level_pct": {
+        "lower_95ci": 95.88,
+        "mean": 96.45,
+        "upper_95ci": 97.02
+      }
+    },
+    "dual_sourcing": {
+      "total_cost_gbp": {
+        "lower_95ci": 1450291.75,
+        "mean": 1457410.29,
+        "upper_95ci": 1464203.93
+      },
+      "service_level_pct": {
+        "lower_95ci": 97.6,
+        "mean": 97.75,
+        "upper_95ci": 97.9
+      }
+    },
+    "paired_cost_comparison": {
+      "comparison": "no_backup_minus_dual_sourcing",
+      "mean_difference_gbp": 25962.15,
+      "lower_95ci_gbp": 13169.58,
+      "upper_95ci_gbp": 39859.29,
+      "bootstrap_probability_difference_gt_zero": 1.0,
+      "interpretation": "difference_positive_and_excludes_zero"
+    },
+    "paired_service_comparison": {
+      "comparison": "no_backup_minus_dual_sourcing",
+      "mean_difference_percentage_points": -1.3,
+      "lower_95ci_percentage_points": -1.85,
+      "upper_95ci_percentage_points": -0.8,
+      "bootstrap_probability_difference_gt_zero": 0.0,
+      "interpretation": "difference_negative_and_excludes_zero"
+    }
+  }
+}

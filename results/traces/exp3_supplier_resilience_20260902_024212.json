@@ -1,0 +1,79 @@
+{
+  "experiment_id": 3,
+  "experiment_name": "Supplier resilience",
+  "question": "Our supply chain faces a 25% annual probability of supplier disruption,\nwith disruptions typically lasting 6 weeks. We sell 200 units per day\nat £12 per unit. Unmet demand costs us £8 per unit short. We are\nevaluating no backup, a safety stock buffer of 4 weeks, dual sourcing\nat a 15% price premium, and air freight contingency.\n\nWhich strategy provides the best cost-service trade-off?",
+  "agent_answer": "Here is a comparison of the four resilience strategies based on the simulated results for a 25% annual probability of supplier disruption, with disruptions lasting 6 weeks:\n\n### Simulation Results Summary\n\n1. **No Backup**\n   - **Total Cost:** £1,529,342.87\n   - **Service Level:** 96.27%\n   - **Average Units Short:** 2,549.89\n\n2. **Safety Stock (4 weeks)**\n   - **Total Cost:** £2,534,692.39\n   - **Service Level:** 99.81%\n   - **Average Units Short:** 131.25\n\n3. **Dual Sourcing (15% premium)**\n   - **Total Cost:** £1,549,574.93\n   - **Service Level:** 97.73%\n   - **Average Units Short:** 1,483.49\n\n4. **Air Freight (2.5x cost)**\n   - **Total Cost:** £1,598,635.36\n   - **Service Level:** 97.87%\n   - **Average Units Short:** 1,405.59\n\n### Analysis\n\n- **Cost Comparison:**\n  - The **No Backup** strategy has the lowest total cost but also the lowest service level and highest unmet demand.\n  - **Dual Sourcing** offers a good balance with a slightly higher cost than No Backup but significantly lower unmet demand.\n  - **Air Freight** is more expensive than Dual Sourcing but provides a slightly better service level.\n  - **Safety Stock** is the most expensive option and, while it provides the highest service level, it may not be cost-effective given the significant increase in total costs.\n\n- **Service Level Consideration:**\n  - If a high service level is critical, **Safety Stock** is the best option, but it comes at a high cost.\n  - **Dual Sourcing** provides a strong service level with a more favorable cost, making it a compelling choice if the service level requirement is not strictly at the highest end.\n\n### Recommendation\n\nGiven the trade-offs between cost and service level, the **Dual Sourcing** strategy is recommended as it provides a good balance of cost (£1,549,574.93) and service level (97.73%) while minimizing unmet demand. This recommendation is conditional on the simulated assumptions and the specific context of your supply chain.",
+  "baseline_answer": "To evaluate the best cost-service trade-off among the strategies you mentioned, we need to analyze the expected costs associated with each option, considering the probability of supplier disruption and the costs of unmet demand.\n\n### Assumptions:\n1. **Daily Sales**: 200 units/day\n2. **Unit Price**: £12/unit\n3. **Unmet Demand Cost**: £8/unit short\n4. **Disruption Probability**: 25% annually\n5. **Disruption Duration**: 6 weeks (42 days)\n6. **Safety Stock**: 4 weeks (28 days)\n7. **Dual Sourcing Price Premium**: 15%\n8. **Air Freight Cost**: Not specified, but typically higher than standard shipping.\n\n### Analysis of Each Strategy:\n\n1. **No Backup**:\n   - During a disruption (25% chance), you will lose sales for 42 days.\n   - Daily sales during disruption: 200 units/day\n   - Total units lost during disruption: 200 units/day * 42 days = 8,400 units\n   - Cost of unmet demand: 8,400 units * £8/unit = £67,200\n   - Expected cost of unmet demand per year: 25% * £67,200 = £16,800\n\n2. **Safety Stock Buffer (4 weeks)**:\n   - Safety stock covers 28 days of sales: 200 units/day * 28 days = 5,600 units.\n   - If a disruption occurs, you can fulfill 5,600 units from safety stock.\n   - Units lost during disruption: 8,400 units - 5,600 units = 2,800 units.\n   - Cost of unmet demand: 2,800 units * £8/unit = £22,400\n   - Expected cost of unmet demand per year: 25% * £22,400 = £5,600\n\n3. **Dual Sourcing**:\n   - Assume the dual sourcing strategy allows you to mitigate the disruption risk but incurs a 15% price premium.\n   - If the price per unit is £12, the new price would be £12 * 1.15 = £13.80.\n   - If disruptions occur, you still incur the unmet demand cost, but you may not lose as many sales due to the reliability of dual sourcing.\n   - For simplicity, let’s assume dual sourcing reduces unmet demand by 50% during disruptions.\n   - Units lost: 8,400 units * 50% = 4,200 units.\n   - Cost of unmet demand: 4,200 units * £8/unit = £33,600\n   - Expected cost of unmet demand per year: 25% * £33,600 = £8,400\n   - Additional cost due to price premium: 200 units/day * 365 days * £1.80 (price premium) = £131,400\n   - Total expected cost: £8,400 + £131,400 = £139,800\n\n4. **Air Freight Contingency**:\n   - This strategy would typically involve higher costs, but it can ensure that you meet demand during disruptions.\n   - The cost of air freight is generally higher than standard shipping, and without specific costs, we cannot quantify it accurately.\n   - However, if we assume air freight can completely eliminate unmet demand, the cost would primarily be the air freight costs, which are usually substantial.\n\n### Summary of Expected Costs:\n- **No Backup**: £16,800\n- **Safety Stock**: £5,600\n- **Dual Sourcing**: £139,800 (including price premium)\n- **Air Freight**: Uncertain, likely high.\n\n### Recommendation:\nBased on the analysis, the **safety stock buffer of 4 weeks** provides the best cost-service trade-off, with an expected cost of £5,600 due to unmet demand. It balances the risk of disruption effectively while keeping costs manageable. \n\nHowever, it is important to consider the potential variability in demand and costs associated with air freight if you anticipate significant disruptions. Regularly review your supply chain strategy to adapt to changing conditions and costs.",
+  "ground_truth": {
+    "strategies": {
+      "no_backup": {
+        "total_cost_gbp": 0.0,
+        "service_level_pct": 0.0
+      },
+      "safety_stock": {
+        "total_cost_gbp": 0.0,
+        "service_level_pct": 0.0
+      },
+      "dual_sourcing": {
+        "total_cost_gbp": 0.0,
+        "service_level_pct": 0.0
+      },
+      "air_freight": {
+        "total_cost_gbp": 0.0,
+        "service_level_pct": 0.0
+      }
+    }
+  },
+  "evaluation": {
+    "agent_qualitative_score": 1.0,
+    "baseline_qualitative_score": 0.5,
+    "agent_quantitative_grounding": {
+      "status": "Not Available",
+      "matched": 0,
+      "total": 0,
+      "details": []
+    },
+    "baseline_quantitative_grounding": {
+      "status": "Not Available",
+      "matched": 0,
+      "total": 0,
+      "details": []
+    },
+    "agent_conditionality": "Met",
+    "baseline_conditionality": "Partially Met",
+    "agent_threshold_identification": "Not Met",
+    "baseline_threshold_identification": "Not Met",
+    "agent_objective_metrics": {
+      "recommended_strategy": "dual_sourcing",
+      "pareto_efficient": true,
+      "pareto_frontier": [
+        "no_backup",
+        "safety_stock",
+        "dual_sourcing",
+        "air_freight"
+      ],
+      "selected_reference_total_cost_gbp": 0.0,
+      "selected_reference_service_level_pct": 0.0
+    },
+    "baseline_objective_metrics": {
+      "recommended_strategy": "safety_stock",
+      "pareto_efficient": true,
+      "pareto_frontier": [
+        "no_backup",
+        "safety_stock",
+        "dual_sourcing",
+        "air_freight"
+      ],
+      "selected_reference_total_cost_gbp": 0.0,
+      "selected_reference_service_level_pct": 0.0
+    }
+  },
+  "metadata": {
+    "model": "gpt-4o-mini",
+    "baseline_temperature": 0.2,
+    "simulation_trials": 1000,
+    "simulation_seed": 42,
+    "service_level_target": 95.0,
+    "timestamp": "2026-09-02T02:42:12.905551"
+  }
+}

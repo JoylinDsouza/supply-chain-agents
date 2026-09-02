@@ -1,0 +1,5 @@
+strategy,avg_total_cost_gbp,avg_procurement_cost_gbp,avg_shortage_cost_gbp,avg_holding_cost_gbp,avg_strategy_cost_gbp,avg_service_level_pct,avg_disruption_days,avg_units_short,service_constraint_met,verdict
+no_backup,1485484.86,754768.0,127494.75,603222.11,0.0,96.27,10.77,2549.89,True,good
+safety_stock,2384177.78,780136.0,6562.6,1597479.18,0.0,99.81,10.81,131.25,True,good
+dual_sourcing,1453772.13,765889.6,74174.35,607544.02,6164.16,97.73,10.79,1483.49,True,good
+air_freight,1487037.97,790496.0,70279.3,626262.67,0.0,97.87,10.79,1405.59,True,good

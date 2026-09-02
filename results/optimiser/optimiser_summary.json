@@ -1,0 +1,47 @@
+{
+  "timestamp": "2026-09-02T03:05:36.302969",
+  "configuration": {
+    "inventory_trials": 1000,
+    "inventory_seed": 42,
+    "inventory_service_target_pct": 95.0,
+    "hub_discount_rate": 0.08,
+    "hub_years": 10,
+    "disruption_probability": 0.25,
+    "disruption_duration_days": 42,
+    "supplier_daily_demand": 200,
+    "supplier_unit_cost": 10,
+    "supplier_shortage_cost_per_unit": 50,
+    "resilience_service_target_pct": 95.0
+  },
+  "inventory_optimiser": {
+    "reorder_point": 1750,
+    "order_quantity": 1500,
+    "cost": 57747.03,
+    "service_level": 96.0,
+    "feasible": true,
+    "selection_status": "lowest_cost_feasible_policy"
+  },
+  "hub_optimiser": {
+    "location": "Netherlands",
+    "growth_rate": 0.2,
+    "npv": 16.277,
+    "probability_profitable": 100.0,
+    "breakeven": 6.6,
+    "npv_p10": 10.596,
+    "npv_p90": 22.488,
+    "recommendation": "INVEST \u2014 financially justified"
+  },
+  "disruption_optimiser": {
+    "strategy": "dual_sourcing",
+    "avg_total_cost_gbp": 1453772.13,
+    "avg_procurement_cost_gbp": 765889.6,
+    "avg_shortage_cost_gbp": 74174.35,
+    "avg_holding_cost_gbp": 607544.02,
+    "avg_strategy_cost_gbp": 6164.16,
+    "avg_service_level_pct": 97.73,
+    "avg_disruption_days": 10.79,
+    "avg_units_short": 1483.49,
+    "service_constraint_met": true,
+    "verdict": "good"
+  }
+}

@@ -85,7 +85,7 @@ def main():
             print(HELP)
             continue
 
-        print("\nProcessing — the agents are running simulations...\n")
+        print("\nProcessing - the agents are running simulations...\n")
         print("─"*65)
 
         try:
